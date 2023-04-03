@@ -355,7 +355,7 @@ class OLSQ:
 
     def _preprocessing(self):
         if not self.input_dependency:
-            self.list_gate_dependency = collision_extracting(self.list_gate_qubits)
+            self.list_gate_dependency = dependency_extracting(self.list_gate_qubits)
         # list_adjacency_qubit takes in a physical qubit index _p_, and
         # returns the list of indices of physical qubits adjacent to _p_
         list_adjacent_qubit = list()

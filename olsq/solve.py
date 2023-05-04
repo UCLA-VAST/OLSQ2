@@ -704,7 +704,7 @@ class OLSQ:
                 # lsqc.pop()
                 tight_bound_depth += 1
                 if tight_bound_depth >= bound_depth:
-                    print("FAIL to find depth witnin {}.".format(bound_depth-1))
+                    print("FAIL to find solution with depth less than  {}.".format(bound_depth - 1))
                     break
         if not find_min_depth:
             return True, None
@@ -742,26 +742,30 @@ class OLSQ:
                 else: 
                     find_min_swap = True
                     not_solved = False
+                lsqc.pop()
             else:
                 lsqc.pop()
                 lower_b_swap = bound_swap_num + 1
                 if upper_b_swap <= lower_b_swap:
-                    start_time = datetime.datetime.now()
-                    print("Trying min swap = {}...".format(upper_b_swap))
-                    # TODO: add atmost-k constraint
-                    lsqc.push()
-                    self._add_atmostk_cnf(lsqc, sigma, upper_b_swap, tight_bound_depth)
-                    satisfiable = lsqc.check()
-                    # satisfiable = lsqc.check(PbLe([(sigma[k][t],1) for k in range(count_qubit_edge)
-                    #      for t in range(bound_depth)], upper_b_swap) ):;q
-                    print("status:{}, optimization time = {}, time including preprocessing = {}".format(satisfiable, datetime.datetime.now() - start_time, timeit.default_timer()-self.start))
-                    assert(satisfiable == sat)
-                    model = lsqc.model()
-                    find_min_swap = True
-                    not_solved = False
+                    while not find_min_swap:
+                        start_time = datetime.datetime.now()
+                        print("Trying min swap = {}...".format(lower_b_swap))
+                        # TODO: add atmost-k constraint
+                        lsqc.push()
+                        self._add_atmostk_cnf(lsqc, sigma, lower_b_swap, tight_bound_depth)
+                        satisfiable = lsqc.check()
+                        # satisfiable = lsqc.check(PbLe([(sigma[k][t],1) for k in range(count_qubit_edge)
+                        #      for t in range(bound_depth)], upper_b_swap) ):;q
+                        print("status:{}, optimization time = {}, time including preprocessing = {}".format(satisfiable, datetime.datetime.now() - start_time, timeit.default_timer()-self.start))
+                        if satisfiable == sat :
+                            model = lsqc.model()
+                            find_min_swap = True
+                            not_solved = False
+                        else:
+                            lower_b_swap += 1
+                        lsqc.pop()
                 elif not use_sabre:
                     bound_swap_num = (upper_b_swap + lower_b_swap)//2
-            lsqc.pop()
         return not_solved, model
     
 
@@ -792,12 +796,24 @@ class OLSQ:
             satisfiable = lsqc.check([UGE(bit_tight_bound_depth, time[l]) for l in range(count_gate)])
             print("status:{}, Depth optimization time = {}, time including preprocessing = {}".format(satisfiable, datetime.datetime.now() - start_time, timeit.default_timer()-self.start))
             if satisfiable == sat:
-                find_min_depth = True
                 model = lsqc.model()
                 n_swap = self._count_swap(model, sigma, tight_bound_depth)
                 upper_b_swap = min(n_swap-1, upper_b_swap)
                 bound_swap_num = upper_b_swap
                 # print("Find minimal depth {} with swap num {}".format(tight_bound_depth, model[count_swap].as_long()))
+                for i in range(1, step):
+                    tight_bound_depth -= 1
+                    bit_tight_bound_depth = BitVecVal(tight_bound_depth-1, length)
+                    satisfiable = lsqc.check([UGE(bit_tight_bound_depth, time[l]) for l in range(count_gate)])
+                    if satisfiable == sat:
+                        model = lsqc.model()
+                        n_swap = self._count_swap(model, sigma, tight_bound_depth-i)
+                        upper_b_swap = min(n_swap-1, upper_b_swap)
+                        bound_swap_num = upper_b_swap
+                    else:
+                        bit_tight_bound_depth += 1
+                        break
+                find_min_depth = True
                 print("Find minimal depth {} with swap num {}".format(tight_bound_depth, n_swap))
             else:
                 # lsqc.pop()
@@ -805,7 +821,7 @@ class OLSQ:
                     step = 10
                 tight_bound_depth = step + tight_bound_depth
                 if tight_bound_depth > bound_depth:
-                    print("FAIL to find depth witnin {}.".format(bound_depth))
+                    print("FAIL to find solution with depth less than  {}.".format(tight_bound_depth-step))
                     break
         if not find_min_depth:
             return True, None
@@ -850,27 +866,30 @@ class OLSQ:
                 else: 
                     find_min_swap = True
                     not_solved = False
+                lsqc.pop()
             else:
                 lsqc.pop()
                 lower_b_swap = bound_swap_num + 1
                 if upper_b_swap <= lower_b_swap:
-                    start_time = datetime.datetime.now()
-                    if upper_b_swap == swap_sabre - 1:
-                        upper_b_swap = swap_sabre
-                    print("Trying min swap = {}...".format(upper_b_swap))
-                    lsqc.push()
-                    self._add_atmostk_cnf(lsqc, sigma, upper_b_swap, tight_bound_depth)
-                    satisfiable = lsqc.check()
-                    # satisfiable = lsqc.check(PbLe([(sigma[k][t],1) for k in range(count_qubit_edge)
-                    #      for t in range(bound_depth)], upper_b_swap) ):;q
-                    print("status:{}, optimization time = {}, time including preprocessing = {}".format(satisfiable, datetime.datetime.now() - start_time, timeit.default_timer()-self.start))
-                    assert(satisfiable == sat)
-                    model = lsqc.model()
-                    find_min_swap = True
-                    not_solved = False
+                    while not find_min_swap:
+                        start_time = datetime.datetime.now()
+                        print("Trying min swap = {}...".format(lower_b_swap))
+                        # TODO: add atmost-k constraint
+                        lsqc.push()
+                        self._add_atmostk_cnf(lsqc, sigma, lower_b_swap, tight_bound_depth)
+                        satisfiable = lsqc.check()
+                        # satisfiable = lsqc.check(PbLe([(sigma[k][t],1) for k in range(count_qubit_edge)
+                        #      for t in range(bound_depth)], upper_b_swap) ):;q
+                        print("status:{}, optimization time = {}, time including preprocessing = {}".format(satisfiable, datetime.datetime.now() - start_time, timeit.default_timer()-self.start))
+                        if satisfiable == sat :
+                            model = lsqc.model()
+                            find_min_swap = True
+                            not_solved = False
+                        else:
+                            lower_b_swap += 1
+                        lsqc.pop()
                 elif not use_sabre:
                     bound_swap_num = (upper_b_swap + lower_b_swap)//2
-            lsqc.pop()
         return not_solved, model
 
     

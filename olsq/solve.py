@@ -1002,7 +1002,7 @@ class OLSQ:
             t = result_time[l]
             list_scheduled_gate_name[t].append(list_gate_name[l])
             if l in list_gate_single:
-                q = model[pi[list_gate_qubits[l][0]][result_time[l]]].as_long()
+                q = q = model[pi[list_gate_qubits[l][0]][model[time[l]].as_long()]].as_long()
                 list_scheduled_gate_qubits[t].append((q,))
             elif l in list_gate_two:
                 [q0, q1] = list_gate_qubits[l]

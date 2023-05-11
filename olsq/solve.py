@@ -270,47 +270,26 @@ class OLSQ:
         self.list_gate_dependency = dependency
         self.input_dependency = True
 
-    def dump(self, folder: str = None):
+    def dump(self, folder: str = None, bound_depth = 5, bound_swap = 2):
         """
         dump constraints for OLSQ mode
         """
         # bound_depth: generate constraints until t = bound_depth
-        bound_depth = 21
         print("start adding constraints...")
         # variable setting 
         self._preprocessing()
         pi, time, sigma = self._construct_variable(bound_depth)
-
-        # lsqc = Solver()
-        # lsqc = Goal()
-        # start = timeit.default_timer()
-        # self._add_injective_mapping_constraints(bound_depth, pi, lsqc)
-        # self._add_consistency_gate_constraints(bound_depth, pi, time, lsqc)
-        # self._add_dependency_constraints(lsqc, time, bound_depth)
-        # self._add_swap_constraints(bound_depth, sigma, lsqc, True, time, pi)
-        # self._add_transformation_constraints(bound_depth, lsqc, sigma, pi)
-        # lsqc.add([UGE(bound_depth, time[l]) for l in range(len(self.list_gate_qubits))])
-        # # print([sigma[k][t] for k in range(count_qubit_edge) for t in range(bound_depth)])
-        # lsqc.add(AtMost(*[sigma[k][t] for k in range(count_qubit_edge) 
-        #                 for t in range(bound_depth)], bound_swap_num) )
-        # self._add_atmostk_cnf(lsqc, sigma, bound_swap_num, bound_depth-1)
-        # print("time to generate constraints: {}".format(timeit.default_timer() - start))
-        # constraints = lsqc.sexpr()
-        # output_file_name = folder+"/"+str(self.count_physical_qubit)+"_"+str(self.count_program_qubit) + "_5_30_atmost.txt"
-        # f = open(output_file_name, "w")
-        # f.write(constraints)
-        # f.write("(check-sat)")
-        # f.close()
 
         lsqc = Goal()
         start = timeit.default_timer()
         self._add_injective_mapping_constraints(bound_depth, pi, lsqc)
         self._add_consistency_gate_constraints(bound_depth, pi, time, lsqc)
         self._add_dependency_constraints(lsqc, time, bound_depth)
-        self._add_swap_constraints(bound_depth, sigma, lsqc, True, time, pi)
+        self._add_swap_constraints(bound_depth, sigma, lsqc)
         self._add_transformation_constraints(bound_depth, lsqc, sigma, pi)
-        lsqc.add([UGE(bound_depth, time[l]) for l in range(len(self.list_gate_qubits))])
+        lsqc.add([UGE(1, time[l]) for l in range(len(self.list_gate_qubits))])
         print("time to generate constraints: {}".format(timeit.default_timer() - start))
+        self._add_atmostk_cnf(lsqc, sigma, bound_swap, bound_depth-1)
         start = timeit.default_timer()
         tactic = Then('simplify','propagate-values','solve-eqs','card2bv','bit-blast', 'tseitin-cnf')
         output_file_name = folder+"/"+str(self.count_physical_qubit)+"_"+str(self.count_program_qubit) + "_21.txt"
@@ -318,7 +297,6 @@ class OLSQ:
         print("time to generate cnf: {}".format(timeit.default_timer() - start))
         with open(output_file_name,"w") as ous:
             ous.write(cnf.dimacs())
-            
         return
 
 

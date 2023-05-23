@@ -287,7 +287,7 @@ class OLSQ:
         self._add_dependency_constraints(lsqc, time, bound_depth)
         self._add_swap_constraints(bound_depth, sigma, lsqc)
         self._add_transformation_constraints(bound_depth, lsqc, sigma, pi)
-        lsqc.add([UGE(1, time[l]) for l in range(len(self.list_gate_qubits))])
+        lsqc.add([UGT(time[l], bound_depth) for l in range(len(self.list_gate_qubits))])
         print("time to generate constraints: {}".format(timeit.default_timer() - start))
         self._add_atmostk_cnf(lsqc, sigma, bound_swap, bound_depth-1)
         start = timeit.default_timer()

@@ -192,4 +192,13 @@ python3 run_olsq.py --dt sycamore --f . --qf benchmark/qaoa/qaoa_16_0.qasm --tra
 
 ## BibTeX Citation
 ```
+@INPROCEEDINGS{10247760,
+  author={Lin, Wan-Hsuan and Kimko, Jason and Tan, Bochen and Bjørner, Nikolaj and Cong, Jason},
+  booktitle={2023 60th ACM/IEEE Design Automation Conference (DAC)}, 
+  title={Scalable Optimal Layout Synthesis for NISQ Quantum Processors}, 
+  year={2023},
+  volume={},
+  number={},
+  pages={1-6},
+  doi={10.1109/DAC56929.2023.10247760}}
 ```

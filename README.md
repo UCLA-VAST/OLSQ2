@@ -171,8 +171,8 @@ If in the `solve` method, `output_mode` is set to `"IR"`, the return is a tuple 
 
 run_olsq.py is an example program to use OLSQ2/TB-OLSQ2 to perform layout synthesis.
 ```
-# compile an qaoa circuit on a 5-by-5 grid quantum device by TB-OLSQ2 using swap as objective and SABRE's result for the starting point of optimization. The output file is IR and will be store in example/.
-python3 run_olsq.py --dt grid --d 4 --f example/ --qf benchmark/qaoa/qaoa_16_0.qasm --swap --sabre --tran
+# compile an qaoa circuit on a 5-by-5 grid quantum device by TB-OLSQ2 using swap as objective and SABRE's result for the starting point of optimization. The output file is IR and will be stored in example/.
+python3 run_olsq.py --dt grid --d 5 --f example/ --qf benchmark/qaoa/qaoa_16_0.qasm --swap --sabre --tran
 # The output files (Final IR output file and the intermediate qasm file) of running the command are in example/.
 
 # compile an qaoa circuit on sycamore quantum device by TB-OLSQ2 using swap as objective and store the output IR file in the current directory
@@ -180,10 +180,10 @@ python3 run_olsq.py --dt sycamore --f . --qf benchmark/qaoa/qaoa_16_0.qasm --tra
 ```
 - `--tran`: Use TB-OLSQ2.
 - `--swap`: Set SWAP count as objective.
-- `--dt $(str)`: Type of the quantum device: ourense, sycamore, rochester, tokyo, aspen-4, eagle, or grid. When using a grid architecure, add `--d $(int)` to specify the grid length.
+- `--dt $(str)`: Type of the quantum device: ourense, sycamore, rochester, tokyo, aspen-4, eagle, or grid. When using a grid architecture, add `--d $(int)` to specify the grid length.
 - `--d $(int)`: Grid length of the grid architecture
 - `--qasm $(str)`: Input QASM file name
-- `--f $(str)`: The location to stroe the output IR file. Default: current directory
+- `--f $(str)`: The location to store the output IR file. Default: current directory
 - `--swap_duration $(int)`: SWAP duration. Default: 1 
 - `--sabre`: Use sabre to get SWAP upper bound
 - `--encoding $(int)`: Different encoding strategies to convert cardinality constraint to CNF. seqcounter = 1, sortnetwrk  = 2, cardnetwrk = 3, totalizer = 6, mtotalizer = 7. kmtotalizer = 8, native = 9

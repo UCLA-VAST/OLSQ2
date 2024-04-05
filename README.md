@@ -101,7 +101,7 @@ This means that no matter how the qubits in the program are mapped to physical q
 result = lsqc_solver.solve()
 ```
 
-The `solve` method can take two optional arguemnts
+The `solve` method can take two optional arguments
 - `use_sabre`: `True` to use SABRE to get the upper bound of the SWAP count for SWAP optimization.
 - `output_mode`: can be `"IR"`. Refer [here](#olsq-ir) on what would be returned in this case.
 - `output_file_name`

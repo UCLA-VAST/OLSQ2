@@ -11,6 +11,7 @@ There is also a transition-based mode (TB) to speed it up with little loss of op
 
 For more details on the theory and the experiments, please refer to [the paper]().
 Below is a brief tutorial on how to use the package.
+For the most recent implementation, including the version using c++ interface of z3 or the more scalable SMT solver Bitwuzla. Please refer to [WanHsuanLin/OLSQ2](https://github.com/WanHsuanLin/OLSQ2).
 
 ## Installation
 
